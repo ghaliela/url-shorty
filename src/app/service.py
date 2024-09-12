@@ -11,7 +11,7 @@ def check_short_hash_collision(short_hash):
     return repository.get_long_url_by_hash(short_hash) is not None
 
 def check_long_url_exists(long_url):
-    return repository.get_long_url_by_url(long_url)
+    return repository.get_short_url_by_url(long_url)
 
 def generate_short_hash(url):
     sha256_hash = hashlib.sha256()
@@ -22,14 +22,17 @@ def generate_short_hash(url):
     # in case of collision
     while(check_short_hash_collision(full_hash[:n])):
         n+=1
+        if n > len(full_hash):
+            raise HTTPException(status_code=500, detail=f"Hash collision: {full_hash}, call every scientist you know")
 
     short_hash = full_hash[:n]
     return short_hash
 
 
 def create_short_hash(url):
-    if check_long_url_exists(url):
-        return check_long_url_exists(url)
+    short_hash = check_long_url_exists(url)
+    if short_hash:
+        return short_hash
     
     short_url = generate_short_hash(url)
 

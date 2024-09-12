@@ -7,7 +7,7 @@ def get_long_url_by_hash(short_hash: str):
     cur.close()
     return long_url[0] if long_url else None
 
-def get_long_url_by_url(long_url: str):
+def get_short_url_by_url(long_url: str):
     cur = conn.cursor()
     cur.execute("SELECT short_hash FROM shortUrls WHERE long_url = %s", (long_url,))
     short_hash = cur.fetchone()
