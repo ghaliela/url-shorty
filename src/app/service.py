@@ -14,9 +14,9 @@ def check_long_url_exists(long_url):
     return repository.get_long_url_by_url(long_url)
 
 def generate_short_hash(url):
-    md5_hash = hashlib.md5()
-    md5_hash.update(str(url).encode('utf-8'))
-    full_hash = md5_hash.hexdigest()
+    sha256_hash = hashlib.sha256()
+    sha256_hash.update(str(url).encode('utf-8'))
+    full_hash = sha256_hash.hexdigest()
 
     n = DEFAULT_HASH_SIZE
     # in case of collision
