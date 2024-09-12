@@ -1,21 +1,28 @@
-# previous imports
 import os
 import psycopg2
 import dotenv
 
-# previous codes ...
+# Load environment variables
+dotenv.load_dotenv()
 
-dotenv.load_dotenv("../.env")
+db_name = os.getenv("DB_NAME")
+db_user = os.getenv("DB_USER")
+db_password = os.getenv("DB_PASSWORD")
 
-driver = psycopg2
+# Connect to your postgres DB
+conn = psycopg2.connect(f"dbname={db_name} user={db_user} password={db_password} host=localhost")
 
-def connect_to_database():
-    return driver.connect(
-        host=os.getenv("DB_HOST"),
-        port=os.getenv("DB_PORT"),
-        user=os.getenv("DB_USERNAME"),
-        password=os.getenv("DB_PASSWORD"),
-        database=os.getenv("DB_NAME")
-    )
+# Open a cursor to perform database operations
+cur = conn.cursor()
 
-connect_to_database()
+# initialize the database
+try:
+    cur.execute("SELECT * FROM shortUrls LIMIT 1")
+except psycopg2.ProgrammingError:
+    cur.execute("ROLLBACK;")
+    cur.execute("BEGIN;")
+    cur.execute("CREATE TABLE shortUrls ( id SERIAL PRIMARY KEY, short_hash VARCHAR(255) NOT NULL, long_url TEXT NOT NULL, clickCount int DEFAULT 0, UNIQUE(short_hash), UNIQUE(long_url) )")
+    cur.execute("CREATE UNIQUE INDEX idx_short_url ON shortUrls (short_hash);")
+    cur.execute("COMMIT;")
+
+cur.close()

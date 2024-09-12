@@ -2,27 +2,25 @@ import hashlib
 
 from fastapi import HTTPException
 
+from . import repository
+
 # default size
 DEFAULT_HASH_SIZE=6
 
-#DB List
-DB=[("e149be", 'https://facebook.com'),("a24a5b", 'https://youtube.com'),("7ccc4c", 'https://google.com'),("3a2039", 'https://wikipedia.org')]
+def check_short_hash_collision(short_hash):
+    return repository.get_long_url_by_hash(short_hash) is not None
 
-#replace with sql_request :
-def sql_request(short_hash,DB):
-    return next((pair for pair in DB if pair[0] == short_hash), None)
-
-# replace with sql_request
 def check_long_url_exists(long_url):
-    return next((pair for pair in DB if pair[1] == long_url), None)
+    return repository.get_long_url_by_url(long_url)
 
-def generate_short_hash(url,n):
+def generate_short_hash(url):
     md5_hash = hashlib.md5()
     md5_hash.update(str(url).encode('utf-8'))
     full_hash = md5_hash.hexdigest()
 
+    n = DEFAULT_HASH_SIZE
     # in case of collision
-    while(sql_request(full_hash[:n],DB)):
+    while(check_short_hash_collision(full_hash[:n])):
         n+=1
 
     short_hash = full_hash[:n]
@@ -31,16 +29,15 @@ def generate_short_hash(url,n):
 
 def create_short_hash(url):
     if check_long_url_exists(url):
-        return check_long_url_exists(url)[0]
+        return check_long_url_exists(url)
     
-    short_url = generate_short_hash(url, DEFAULT_HASH_SIZE)
+    short_url = generate_short_hash(url)
 
-    DB.append((short_url, url))
-    print(DB)
+    repository.create_short_hash(short_url, url)
     return short_url
 
 def get_long_url(short_hash):
-    long_url_tuple = next((url for url in DB if url[0] == short_hash), None)
+    long_url_tuple = repository.get_long_url_by_hash(short_hash)
     if not long_url_tuple:
         raise HTTPException(status_code=404, detail="URL not found")
-    return long_url_tuple[1]
+    return long_url_tuple

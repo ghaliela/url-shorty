@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, HttpUrl, FtpUrl
 
-import app.service as service
+from . import service
 
 app = FastAPI()
 
@@ -11,7 +11,7 @@ class Url(BaseModel):
 
 @app.post("/")
 def create_short_url(body: Url):
-    return service.create_short_hash(body.longUrl)
+    return service.create_short_hash(str(body.longUrl))
 
 @app.get("/{short_hash}")
 def get_long_url(short_hash: str):
