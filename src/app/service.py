@@ -40,4 +40,5 @@ def get_long_url(short_hash):
     long_url_tuple = repository.get_long_url_by_hash(short_hash)
     if not long_url_tuple:
         raise HTTPException(status_code=404, detail="URL not found")
+    repository.increment_click_count(short_hash)
     return long_url_tuple

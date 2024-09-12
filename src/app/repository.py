@@ -21,3 +21,9 @@ def create_short_hash(short_hash: str, long_url: str):
     conn.commit()
     cur.close()
     return short_hash
+
+def increment_click_count(short_hash: str):
+    cur = conn.cursor()
+    cur.execute("UPDATE shortUrls SET clickCount = clickCount + 1 WHERE short_hash = %s", (short_hash,))
+    conn.commit()
+    cur.close()

@@ -23,6 +23,7 @@ except psycopg2.ProgrammingError:
     cur.execute("BEGIN;")
     cur.execute("CREATE TABLE shortUrls ( id SERIAL PRIMARY KEY, short_hash VARCHAR(255) NOT NULL, long_url TEXT NOT NULL, clickCount int DEFAULT 0, UNIQUE(short_hash), UNIQUE(long_url) )")
     cur.execute("CREATE UNIQUE INDEX idx_short_url ON shortUrls (short_hash);")
+    cur.execute("CREATE UNIQUE INDEX idx_long_url ON shortUrls (long_url);")
     cur.execute("COMMIT;")
 
 cur.close()
