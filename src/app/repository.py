@@ -1,4 +1,4 @@
-from src.setup import conn
+from ..setup import conn
 
 def get_long_url_by_hash(short_hash: str):
     cur = conn.cursor()
