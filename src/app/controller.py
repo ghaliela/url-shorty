@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, HttpUrl, FtpUrl
 
 import app.service as service
@@ -14,12 +15,5 @@ def create_short_url(body: Url):
 
 @app.get("/{short_hash}")
 def get_long_url(short_hash: str):
-    print(short_hash)
-    return service.get_long_url(short_hash)
-
-@app.get("/")
-def redirect_to_docs():
-    print('redirect_to_docs')
-    return {"message": "Redirecting to /docs"}
-
-# RedirectResponse(url="/docs", status_code=status.HTTP_302_FOUND)
+    long_url = service.get_long_url(short_hash)
+    return RedirectResponse(url=long_url, status_code=302)

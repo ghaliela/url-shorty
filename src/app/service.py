@@ -42,5 +42,5 @@ def create_short_hash(url):
 def get_long_url(short_hash):
     long_url_tuple = next((url for url in DB if url[0] == short_hash), None)
     if not long_url_tuple:
-        return HTTPException(status_code=404, detail="URL not found")
+        raise HTTPException(status_code=404, detail="URL not found")
     return long_url_tuple[1]
