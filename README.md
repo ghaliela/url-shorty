@@ -22,7 +22,7 @@ with the body:
 We get 6+ characters string.
 
 If we call the url:
-GET /<code>
+GET /{code}
 We get a 302 response redirecting towards the long url.
 
 ## Example:
@@ -30,6 +30,7 @@ POST /
 {
   longUrl: "https://example.com"
 }
+
 __Response__ => 201 "hdf2jE"
 
 Then if we call
