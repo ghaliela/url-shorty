@@ -15,7 +15,7 @@ POST /
 with the body:
 ```json
 {
-  longUrl: "https://example.com"
+  "longUrl": "https://example.com"
 }
 ```
 
